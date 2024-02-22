@@ -1,3 +1,7 @@
+import json
+
+import requests
+
 from app.workflow.jobs.base_job import BaseJob
 
 
@@ -7,6 +11,11 @@ class Dssat(BaseJob):
         return dssat_request
 
     def run(self, *args, **kwargs):
+        """
+        This function is responsible to call DSSAT Pheno which will provide the growth stage predictions
+        @args: DSSAT request
+        @return: DSSAT Pheno response
+        """
         dssat_request = args
-        # call DSSAT API to get growth stages
-        self.data = None  # dssat output
+        self.data = requests.request("POST", self.ie_prediction_api, headers=self.headers,
+                                     data=json.dumps(dssat_request[0])).json()
