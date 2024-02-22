@@ -9,7 +9,7 @@ import yaml
 import concurrent.futures
 from dataclasses import dataclass, field
 
-from workflow.jobs.base_job import BaseJob
+from app.workflow.jobs.base_job import BaseJob
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -59,7 +59,7 @@ class Engine:
 
     def load_job(self, job_name):
         module = importlib.import_module(
-            f".{job_name}", package="jobs"
+            f".{job_name}", package="app.workflow.jobs"
         )
         return getattr(module, self.convert_job_to_class(job_name))
 
