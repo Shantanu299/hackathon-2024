@@ -1,3 +1,4 @@
+from app.utils import find_by_key
 from app.workflow.jobs.base_job import BaseJob
 
 
@@ -10,33 +11,37 @@ class ResponseProcessor(BaseJob):
 
     def run(self, *args, **kwargs):
         dssat_output, dry_down_output, bydv_output = args
-        if dry_down_output['results'][0]['predictions'][-1]['feature_category'] == 'optimal_harvest_time':
-            dssat_output['results'][0]['predictions'].append(
-                {
-                    "feature_category": "best_harvest",
-                    "features": [
-                        {
-                            "type": "best_harvest:date",
-                            "value": f"{dry_down_output['results'][0]['predictions'][-1]['features'][0]['value']}"
-                        }
-                    ]
+        ################## DRY-DOWN RESPONSE ################
+        dry_down_feature_categories = find_by_key(dry_down_output, 'predictions')
+        optimal_harvest_category = list(filter(
+            lambda feature_category: feature_category['feature_category'] == 'optimal_harvest_time',
+            dry_down_feature_categories))[0]
 
-                }
-            )
-        else:
-            for dry_down_result in dry_down_output['results'][0]['predictions']:
-                if dry_down_result['feature_category'] == 'optimal_harvest_time':
-                    dssat_output['results'][0]['predictions'].append(
-                        {
-                            "feature_category": "best_harvest",
-                            "features": [
-                                {
-                                    "type": "best_harvest:date",
-                                    "value": f"{dry_down_output['results'][0]['predictions'][-1]['features'][0]['value']}"
-                                }
-                            ]
-
-                        }
-                    )
+        dssat_feature_categories = find_by_key(dssat_output, 'predictions')
+        dssat_feature_categories.append(
+            {
+                "feature_category": "best_harvest",
+                "features": [
+                    {
+                        "type": "best_harvest:date",
+                        "value": f"{optimal_harvest_category['features'][0]['value']}T00:00:00Z"
+                    }
+                ]
+            }
+        )
+        ################## BYDV RESPONSE ################
+        bydv_feature_categories = find_by_key(bydv_output, 'predictions')
+        bydv_risk_warning_features = []
+        for feature_category in bydv_feature_categories:
+            warning = feature_category['feature_category']
+            date = feature_category['features'][0]['value']
+            bydv_risk_warning_features.append({
+                'type': f'{warning}:date',
+                'value': f'{date}T00:00:00Z'
+            })
+        dssat_feature_categories.append({
+            'feature_category': 'bydv_risk',
+            'features': bydv_risk_warning_features
+        })
 
         self.data = dssat_output
