@@ -4,12 +4,19 @@ from app.workflow.jobs.base_job import BaseJob
 
 class ResponseProcessor(BaseJob):
     def prepare(self, *args, **kwargs):
+        """
+        Function to prepare input for response of prediction API
+        """
         dssat_output = self.context['dssat'].data
         dry_down_output = self.context['dry_down'].data
         bydv_output = self.context['bydv'].data
         return dssat_output, dry_down_output, bydv_output
 
     def run(self, *args, **kwargs):
+        """
+        Function to prepare response of prediction API
+        @args: tuple of dssat_output, dry_down_output, bydv_output
+        """
         dssat_output, dry_down_output, bydv_output = args
         ################## DRY-DOWN RESPONSE ################
         dry_down_feature_categories = find_by_key(dry_down_output, 'predictions')

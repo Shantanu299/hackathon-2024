@@ -35,6 +35,11 @@ class Bydv(BaseJob):
     }
 
     def get_emergence_date(self, dssat_output):
+        """
+        Function to get emergence date from DSSAT output
+        @dssat_output: DSSAT output
+        @return: emergence date
+        """
         feature_categories = find_by_key(dssat_output, 'predictions')
         emergence_f = False
         for feature_category in feature_categories:
@@ -45,6 +50,9 @@ class Bydv(BaseJob):
                     return feature['value']
 
     def prepare(self, *args, **kwargs):
+        """
+        Function to prepare job or making inputs to run BYDV model
+        """
         dssat_output = self.context['dssat'].data
         long, lat = find_by_key(self.seed, 'coordinates')
         data = {
@@ -57,6 +65,10 @@ class Bydv(BaseJob):
         return bydv_input
 
     def run(self, *args, **kwargs):
+        """
+        Function to run BYDV model on prepared input
+        @args: BYDV request
+        """
         bydv_input = args
         # call Bydv API to get harvest data
         self.data = requests.request(

@@ -1,6 +1,5 @@
 import json, requests, logging
 from app.workflow.jobs.base_job import BaseJob
-from app.workflow.jsons.outputs import drydown_sample_input
 from app.utils import find_by_key, get_growth_stage_date
 from app.json_transformer.json_to_json import JSONToJSON
 
@@ -55,6 +54,9 @@ class DryDown(BaseJob):
     }
 
     def prepare(self, *args, **kwargs):
+        """
+        Function to prepare job or making inputs to run DryDown model
+        """
         dssat_output = self.context['dssat'].data
         long, lat = find_by_key(self.seed, "coordinates")
         data = {
@@ -65,17 +67,20 @@ class DryDown(BaseJob):
             "moisture": 35
         }
         json_obj = JSONToJSON(self.DRY_DOWN_INPUT)
-        drydown_input = json_obj.transform(data)
-        return drydown_input
+        dry_down_input = json_obj.transform(data)
+        return dry_down_input
 
     def run(self, *args, **kwargs):
-        drydown_request = args
-        logger.info(f"Drydown request: {drydown_request}")
+        """
+        Function to run DryDown model on prepared input
+        @args: DryDown request
+        """
+        dry_down_request = args
+        logger.info(f"Drydown request: {dry_down_request}")
         # call DryDown API to get harvest data
-        self.data = None
         self.data = requests.request(
             "POST",
             self.ie_prediction_api,
             headers=self.headers,
-            data=json.dumps(drydown_request[0])
+            data=json.dumps(dry_down_request[0])
         ).json()

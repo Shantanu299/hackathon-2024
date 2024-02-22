@@ -10,9 +10,9 @@ class Dssat(BaseJob):
 
     def run(self, *args, **kwargs):
         """
-        This function is responsible to call DSSAT Pheno which will provide the growth stage predictions
+        This function is responsible to call DSSAT Pheno which will provide the growth stage
+        predictions
         @args: DSSAT request
-        @return: DSSAT Pheno response
         """
         dssat_request = args
         self.data = requests.request(
