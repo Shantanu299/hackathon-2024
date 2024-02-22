@@ -10,6 +10,7 @@ from app.workflow.jobs.base_job import BaseJob
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class Bydv(BaseJob):
     BYDV_REQUEST = {
         "request_version": "v1.0",
