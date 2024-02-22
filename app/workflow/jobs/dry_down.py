@@ -9,6 +9,51 @@ logger = logging.getLogger(__name__)
 
 
 class DryDown(BaseJob):
+    DRY_DOWN_INPUT = {
+        "request_version": "v1.0",
+        "fields": [
+            {
+                "models": [
+                    {
+                        "name": "dry-down",
+                        "version": "v1.0"
+                    }
+                ],
+                "location": {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            lambda row_dict: row_dict["long"],
+                            lambda row_dict: row_dict["lat"]
+                        ]
+                    }
+                },
+                "crop": lambda row_dict: row_dict["crop"],
+                "observations": [
+                    {
+                        "category": "crop_growth_stages",
+                        "values": [
+                            {
+                                "scale": "ritchie",
+                                "stage_name": "R6",
+                                "date": lambda row_dict: row_dict["date"]
+                            }
+                        ]
+                    }
+                ],
+                "crop_variety": {
+                    "attribute": {
+                        "drying_coefficient_k": 0.0336
+                    }
+                },
+                "attributes": {
+                    "grain_moisture_at_harvest": lambda row_dict: row_dict["moisture"]
+                }
+            }
+        ]
+    }
+
     def prepare(self, *args, **kwargs):
         dssat_output = self.context['dssat'].data
         long, lat = find_by_key(self.seed, "coordinates")
@@ -19,7 +64,7 @@ class DryDown(BaseJob):
             "crop": find_by_key(self.seed, "crop"),
             "moisture": 35
         }
-        json_obj = JSONToJSON(drydown_sample_input)
+        json_obj = JSONToJSON(self.DRY_DOWN_INPUT)
         drydown_input = json_obj.transform(data)
         return drydown_input
 
