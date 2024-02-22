@@ -1,7 +1,6 @@
 import json
 import requests
 from app.workflow.jobs.base_job import BaseJob
-from app.workflow.jsons import outputs
 
 
 class Dssat(BaseJob):
@@ -16,5 +15,9 @@ class Dssat(BaseJob):
         @return: DSSAT Pheno response
         """
         dssat_request = args
-        self.data = requests.request("POST", self.ie_prediction_api, headers=self.headers,
-                                     data=json.dumps(dssat_request[0])).json()
+        self.data = requests.request(
+            "POST",
+            self.ie_prediction_api,
+            headers=self.headers,
+            data=json.dumps(dssat_request[0])
+        ).json()

@@ -28,5 +28,9 @@ class DryDown(BaseJob):
         logger.info(f"Drydown request: {drydown_request}")
         # call DryDown API to get harvest data
         self.data = None
-        self.data = requests.request("POST", self.ie_prediction_api, headers=self.headers,
-                                     data=json.dumps(drydown_request[0])).json()
+        self.data = requests.request(
+            "POST",
+            self.ie_prediction_api,
+            headers=self.headers,
+            data=json.dumps(drydown_request[0])
+        ).json()
