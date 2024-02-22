@@ -10,6 +10,33 @@ class ResponseProcessor(BaseJob):
 
     def run(self, *args, **kwargs):
         dssat_output, dry_down_output, bydv_output = args
-        # process response accordingly
-        self.data = {"dssat_output": dssat_output, "dry_down_output": dry_down_output, "bydv_output": bydv_output}
+        if dry_down_output['results'][0]['predictions'][-1]['feature_category'] == 'optimal_harvest_time':
+            dssat_output['results'][0]['predictions'].append(
+                {
+                    "feature_category": "best_harvest",
+                    "features": [
+                        {
+                            "type": "best_harvest:date",
+                            "value": f"{dry_down_output['results'][0]['predictions'][-1]['features'][0]['value']}"
+                        }
+                    ]
 
+                }
+            )
+        else:
+            for dry_down_result in dry_down_output['results'][0]['predictions']:
+                if dry_down_result['feature_category'] == 'optimal_harvest_time':
+                    dssat_output['results'][0]['predictions'].append(
+                        {
+                            "feature_category": "best_harvest",
+                            "features": [
+                                {
+                                    "type": "best_harvest:date",
+                                    "value": f"{dry_down_output['results'][0]['predictions'][-1]['features'][0]['value']}"
+                                }
+                            ]
+
+                        }
+                    )
+
+        self.data = dssat_output
