@@ -1,7 +1,5 @@
 import json
-
 import requests
-
 from app.workflow.jobs.base_job import BaseJob
 from app.workflow.jsons import outputs
 
