@@ -57,12 +57,13 @@ class DryDown(BaseJob):
         """
         Function to prepare job or making inputs to run DryDown model
         """
+        logger.info("Preparing input for Dry-Down model API")
         dssat_output = self.context['dssat'].data
         long, lat = find_by_key(self.seed, "coordinates")
         data = {
             "lat": lat,
             "long": long,
-            "date": get_growth_stage_date(dssat_output),
+            "date": get_growth_stage_date(dssat_output).split("T")[0],
             "crop": find_by_key(self.seed, "crop"),
             "moisture": 35
         }
@@ -76,7 +77,7 @@ class DryDown(BaseJob):
         @args: DryDown request
         """
         dry_down_request = args
-        logger.info(f"Drydown request: {dry_down_request}")
+        logger.info(f"Dry-Down Input: {dry_down_request[0]}")
         # call DryDown API to get harvest data
         self.data = requests.request(
             "POST",

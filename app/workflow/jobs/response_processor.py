@@ -1,5 +1,10 @@
+import logging
+
 from app.utils import find_by_key
 from app.workflow.jobs.base_job import BaseJob
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class ResponseProcessor(BaseJob):
@@ -7,6 +12,7 @@ class ResponseProcessor(BaseJob):
         """
         Function to prepare input for response of prediction API
         """
+        logger.info("Preparing input for prediction API output")
         dssat_output = self.context['dssat'].data
         dry_down_output = self.context['dry_down'].data
         bydv_output = self.context['bydv'].data
@@ -18,6 +24,7 @@ class ResponseProcessor(BaseJob):
         @args: tuple of dssat_output, dry_down_output, bydv_output
         """
         dssat_output, dry_down_output, bydv_output = args
+        logger.info("Combining DSSAT, Dry-Down and BYDV model outputs")
         ################## DRY-DOWN RESPONSE ################
         dry_down_feature_categories = find_by_key(dry_down_output, 'predictions')
         optimal_harvest_category = list(filter(
@@ -50,5 +57,5 @@ class ResponseProcessor(BaseJob):
             'feature_category': 'bydv_risk',
             'features': bydv_risk_warning_features
         })
-
+        logger.info("ResponseProcessor job is done, returning response in API output")
         self.data = dssat_output
