@@ -106,6 +106,6 @@ class Engine:
                 self.context[job_name] = self.execute_job(job_name)
 
 
-if __name__ == '__main__':
-    engine = Engine(workflow_name='cropwise-data-crawl', seed=1)
-    engine.run(engine.arrange_jobs())
+# if __name__ == '__main__':
+#     engine = Engine(workflow_name='cropwise-data-crawl', seed=1)
+#     engine.run(engine.arrange_jobs())
