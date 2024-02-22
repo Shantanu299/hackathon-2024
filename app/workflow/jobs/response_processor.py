@@ -12,4 +12,5 @@ class ResponseProcessor(BaseJob):
     def run(self, *args, **kwargs):
         dssat_output, dry_down_output, bydv_output = args
         # process response accordingly
-        self.data = dssat_output
+        self.data = {"dssat_output": dssat_output, "dry_down_output": dry_down_output, "bydv_output": bydv_output}
+
