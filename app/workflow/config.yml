@@ -1,0 +1,25 @@
+version: 1.0
+jobs:
+  dry_down:
+    parallel:
+      true
+    context:
+      - dssat
+  bydv:
+    parallel:
+      true
+    context:
+      - dssat
+  response_processor:
+    context:
+      - dssat
+      - dry_down
+      - bydv
+
+workflows:
+  wallace:
+    jobs:
+      - dssat
+      - dry_down
+      - bydv
+      - response_processor
